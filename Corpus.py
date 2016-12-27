@@ -24,8 +24,8 @@ class Corpus:
         # each sentence must have exactly one translation
         assert len(self.french_sentences) == len(self.english_sentences)
 
-        self.Jmax = max([len(F) for F in self.french_words])
-        self.Imax = max([len(E) for E in self.english_words])
+        self.Jmax = max([len(F) for F in self.french_sentences])
+        self.Imax = max([len(E) for E in self.english_sentences])
         self.french_words = np.array(list(self.french_words))
         self.english_words = np.array(list(self.english_words))
         for s in range(len(self.english_sentences)):
@@ -56,9 +56,9 @@ class Corpus:
 #################################
 ###  Minimal working example  ###
 #################################
-### Uncomment to test
 
-# c = Corpus('corpus.txt')
-# for frenchWord in c.french_words:
-#     print(frenchWord)
-# c.print_corpus_description()
+
+c = Corpus('corpus.txt')
+for frenchWord in c.french_words:
+    print(frenchWord)
+c.print_corpus_description()
