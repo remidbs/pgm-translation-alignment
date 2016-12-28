@@ -5,7 +5,7 @@ import numpy as np
 corpus = Corpus.Corpus("corpus.txt")
 
 ibm1 = IBM1.IBM1(corpus)
-ibm1.train(10)
+ibm1.train(40)
 
 
 print "\nIBM1 perplexity : ",ibm1.get_perplexity(),"\n"

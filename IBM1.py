@@ -53,6 +53,7 @@ class IBM1:
                     self.proba_f_knowing_e[f,e] = coeff*self.proba_f_knowing_e[f,e]
                 #normalize each row
                 self.proba_f_knowing_e[:,e]=self.proba_f_knowing_e[:,e]/max(1,sum(self.proba_f_knowing_e[:,e]))
+            print self.get_perplexity()
         return
 
     def get_perplexity(self,):
@@ -70,4 +71,4 @@ class IBM1:
                 perplexity = perplexity * temp
                 
             perplexity = perplexity * self.proba_J_knowing_I[J,I] / I
-        return math.pow(perplexity,1.0/n_sentences)
+        return 1/math.pow(perplexity, 1.0/n_sentences)
