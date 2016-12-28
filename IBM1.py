@@ -69,4 +69,4 @@ class IBM1:
                 perplexity = perplexity * temp
                 
             perplexity = perplexity * self.proba_J_knowing_I[J,I] / I
-        return math.pow(perplexity, 1.0/n_sentences)
+        return 1/math.pow(perplexity, 1.0/n_sentences)
