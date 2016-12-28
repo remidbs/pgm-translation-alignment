@@ -50,17 +50,16 @@ class Corpus:
         }
 
     def print_corpus_description(self):
+        print("Corpus description:")
         for (key, value) in self.corpus_description().items():
             print(key, value)
-
-
 
 #################################
 ###  Minimal working example  ###
 #################################
 
-
-c = Corpus('corpus.txt')
-for frenchWord in c.french_words:
-    print(frenchWord)
-c.print_corpus_description()
+def minimal_working_example():
+    c = Corpus('corpus.txt')
+    for frenchWord in c.french_words:
+        print(frenchWord)
+    c.print_corpus_description()
