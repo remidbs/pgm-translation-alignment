@@ -64,3 +64,5 @@ f2eTer = np.argmax(hmm.proba_f_knowing_e, axis = 1)
 print("HMM Translations :")
 for i in range(len(corpus.french_words)):
     print corpus.french_words[i], " --> ", corpus.english_words[f2e[i]]
+
+# Just a bonus line for the PLAISIR
