@@ -36,8 +36,9 @@ class Corpus:
                 self.french_sentences[s][j] =\
                     np.where(self.french_words == self.french_sentences[s][j])[0][0]
 
-
-    # Just for some comfort
+    #########################
+    # Just for some comfort #
+    #########################
 
     def corpus_description(self):
         return {

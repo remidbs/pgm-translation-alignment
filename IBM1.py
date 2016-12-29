@@ -7,7 +7,7 @@ class IBM1:
         self.Jmax = corpus.Jmax  # max length of a french sentence
         self.Imax = corpus.Imax  # max length of an english sentence
         self.corpus = corpus
-        self.proba_J_knowing_I = np.zeros((self.Jmax+1, self.Imax+1)) #coefficient [j,i] contains P(j|i)
+        self.proba_J_knowing_I = np.zeros((self.Jmax+1, self.Imax+1)) # coefficient [j,i] contains P(j|i)
         self.proba_f_knowing_e = np.zeros((len(corpus.french_words),len(corpus.english_words)))
     
     def train(self, n_iterations, verbose=False):
@@ -50,7 +50,7 @@ class IBM1:
                         coeff += sum_delta_f[f,s]*sum_delta_e[e,s]/temp
                         
                     self.proba_f_knowing_e[f,e] = coeff*self.proba_f_knowing_e[f,e]
-                #normalize each row
+                # normalize each row
                 self.proba_f_knowing_e[:,e]=self.proba_f_knowing_e[:,e]/max(1,sum(self.proba_f_knowing_e[:,e]))
             if verbose:
                 print "Iteration nb",it,". Perplexity :",self.get_perplexity()
