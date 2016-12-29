@@ -10,7 +10,7 @@ class IBM1:
         self.proba_J_knowing_I = np.zeros((self.Jmax+1, self.Imax+1)) #coefficient [j,i] contains P(j|i)
         self.proba_f_knowing_e = np.zeros((len(corpus.french_words),len(corpus.english_words)))
     
-    def train(self, n_iterations):
+    def train(self, n_iterations, verbose=False):
         
         n_sentences = len(self.corpus.english_sentences)
         n_french_words = len(self.corpus.french_words)
@@ -52,6 +52,8 @@ class IBM1:
                     self.proba_f_knowing_e[f,e] = coeff*self.proba_f_knowing_e[f,e]
                 #normalize each row
                 self.proba_f_knowing_e[:,e]=self.proba_f_knowing_e[:,e]/max(1,sum(self.proba_f_knowing_e[:,e]))
+            if verbose:
+                print "Iteration nb",it,". Perplexity :",self.get_perplexity()
         return
 
     def get_perplexity(self,):
