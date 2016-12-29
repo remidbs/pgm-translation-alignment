@@ -53,6 +53,31 @@ class Corpus:
         print("Corpus description:")
         for (key, value) in self.corpus_description().items():
             print(key, value)
+            
+    def print_alignment(self, sentence_index, alignment):
+        f = self.french_sentences[sentence_index]
+        J = len(f)
+        e = self.english_sentences[sentence_index]
+        I = len(e)
+        
+        max_length_of_english_word = np.max(np.vectorize(len)(self.english_words[e]))
+        max_length_of_french_word = np.max(np.vectorize(len)(self.french_words[f]))
+        for j in range(J):
+            print (self.french_words[f[j]]).rjust(max_length_of_french_word),
+            for i in range(I):
+                if i == alignment[j]:
+                    print "X",
+                else:
+                    print " ",
+            print
+        for k in range(max_length_of_english_word):
+            print (" ").rjust(max_length_of_french_word),
+            for i in range(I):
+                if k < len(self.english_words[e[i]]):
+                    print self.english_words[e[i]][k],
+                else:
+                    print " ",
+            print 
 
 #################################
 ###  Minimal working example  ###
