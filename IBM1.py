@@ -72,3 +72,12 @@ class IBM1:
                 
             perplexity = perplexity * self.proba_J_knowing_I[J,I] / I
         return 1/math.pow(perplexity, 1.0/n_sentences)
+
+    def get_viterbi_alignment(self,sentence_index = 0):
+        f = self.corpus.french_sentences[sentence_index]
+        e = self.corpus.english_sentences[sentence_index]        
+        most_likely_alignment = self.proba_f_knowing_e[f,:][:,e].argmax(axis=1)
+        return most_likely_alignment
+        
+    def print_viterbi_alignment(self, sentence_index = 0):
+        self.corpus.print_alignment(sentence_index, self.get_viterbi_alignment(sentence_index))

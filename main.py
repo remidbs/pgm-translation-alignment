@@ -27,22 +27,30 @@ print "IBM1 Translations :"
 for i in range(len(corpus.french_words)):
     print corpus.french_words[i], " --> ", corpus.english_words[f2e[i]]
 
+ibm1.print_viterbi_alignment(0)
+ibm1.print_viterbi_alignment(4)
+
 #%% Testing IBM2
 
 
 ibm2 = IBM2.IBM2(corpus)
 print("starting to train IBM2...")
-ibm2.train(10,True, penalization=-10000000000.0)
+ibm2.train(10,True)
 print("...done")
 f2e = np.argmax(ibm2.proba_f_knowing_e,axis=1)
 
-ibm2.train(10,True,penalization=8.0)
-f2ebis = np.argmax(ibm2.proba_f_knowing_e,axis=1)
-
+ibm2bis = IBM2.IBM2(corpus,penalization=9.0)
+ibm2bis.train(10,True)
+f2ebis = np.argmax(ibm2bis.proba_f_knowing_e,axis=1)
 
 print "IBM2 Translations :"
 for i in range(len(corpus.french_words)):
     print corpus.french_words[i], " --> ", corpus.english_words[f2e[i]],",", corpus.english_words[f2ebis[i]]
+
+ibm2.print_viterbi_alignment(0)
+ibm2bis.print_viterbi_alignment(0)
+ibm2.print_viterbi_alignment(4)
+ibm2bis.print_viterbi_alignment(4)
 
 #%% testing HMM
 print(" ")
