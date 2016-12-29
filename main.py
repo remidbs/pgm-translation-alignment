@@ -1,6 +1,10 @@
 import Corpus
-import IBM1
 import numpy as np
+
+import IBM1
+import IBM2
+import HMM
+
 
 print("loading the corpus...")
 corpus = Corpus.Corpus("corpus.txt")
@@ -25,7 +29,6 @@ for i in range(len(corpus.french_words)):
 
 #%% Testing IBM2
 
-import IBM2
 
 ibm2 = IBM2.IBM2(corpus)
 print("starting to train IBM2...")
@@ -40,3 +43,16 @@ f2ebis = np.argmax(ibm2.proba_f_knowing_e,axis=1)
 print "IBM2 Translations :"
 for i in range(len(corpus.french_words)):
     print corpus.french_words[i], " --> ", corpus.english_words[f2e[i]],",", corpus.english_words[f2ebis[i]]
+
+#%% testing HMM
+print(" ")
+print(" ***** ")
+print(" ")
+hmm = HMM.HMM(corpus)
+print("Starting to train HMM...")
+hmm.train(10,True)
+print("...done")
+f2eTer = np.argmax(hmm.proba_f_knowing_e, axis = 1)
+print("HMM Translations :")
+for i in range(len(corpus.french_words)):
+    print corpus.french_words[i], " --> ", corpus.english_words[f2e[i]]
