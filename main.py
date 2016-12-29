@@ -33,8 +33,9 @@ ibm2.train(10,True, penalization=-10000000000.0)
 print("...done")
 f2e = np.argmax(ibm2.proba_f_knowing_e,axis=1)
 
-ibm2.train(10,True,penalization=8.0)
-f2ebis = np.argmax(ibm2.proba_f_knowing_e,axis=1)
+ibm2bis = IBM2.IBM2(corpus)
+ibm2bis.train(10,True,penalization=9.0)
+f2ebis = np.argmax(ibm2bis.proba_f_knowing_e,axis=1)
 
 
 print "IBM2 Translations :"
