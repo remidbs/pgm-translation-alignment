@@ -55,7 +55,7 @@ class HMM:
                 for j in range(J):
                     count[f[j],e[most_likely_alignment[j]]] += 1
 
-            self.proba_f_knowing_e = count/count.sum(axis=1)
+            self.proba_f_knowing_e = count/count.sum(axis=0)
             if verbose:
                 print "Iteration nb",it,". Perplexity :",self.get_perplexity()
         return
