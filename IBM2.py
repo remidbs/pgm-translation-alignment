@@ -40,4 +40,4 @@ class IBM2:
                 print "Iteration nb",it,". Perplexity :",self.get_perplexity()
         return
     def get_perplexity(self,):
-        return 1/np.exp(self.loglikelihood/len(self.corpus.french_sentences))
+        return np.exp(-self.loglikelihood/len(self.corpus.french_sentences))
