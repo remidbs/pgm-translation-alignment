@@ -67,10 +67,10 @@ class IBM1:
                 for i in range(I):
                     f = self.corpus.french_sentences[s][j]
                     e = self.corpus.english_sentences[s][i]
-                    temp += self.proba_f_knowing_e[f,e]
+                    temp += self.proba_f_knowing_e[f,e]/I
                 perplexity = perplexity * temp
                 
-            perplexity = perplexity * self.proba_J_knowing_I[J,I] / I
+            perplexity = perplexity * self.proba_J_knowing_I[J,I]
         return 1/math.pow(perplexity, 1.0/n_sentences)
 
     def get_viterbi_alignment(self,sentence_index = 0):

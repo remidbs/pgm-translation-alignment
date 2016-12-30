@@ -37,6 +37,7 @@ print(" ")
 print("*"*50)
 print(" ")
 ibm2 = IBM2.IBM2(corpus)
+ibm2.proba_f_knowing_e = ibm1.proba_f_knowing_e
 print("starting to train IBM2...")
 ibm2.train(10,True)
 print("...done")
@@ -50,9 +51,9 @@ print "IBM2 Translations :"
 for i in range(len(corpus.french_words)):
     print corpus.french_words[i], " --> ", corpus.english_words[f2e[i]],"," # , corpus.english_words[f2ebis[i]]
 
-ibm2.print_viterbi_alignment(0)
+#ibm2.print_viterbi_alignment(0)
 # ibm2bis.print_viterbi_alignment(0)
-ibm2.print_viterbi_alignment(4)
+#ibm2.print_viterbi_alignment(4)
 # ibm2bis.print_viterbi_alignment(4)
 
 #%% testing HMM
