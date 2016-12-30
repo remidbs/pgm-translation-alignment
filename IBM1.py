@@ -51,7 +51,7 @@ class IBM1:
                         
                     self.proba_f_knowing_e[f,e] = coeff*self.proba_f_knowing_e[f,e]
                 # normalize each row
-                self.proba_f_knowing_e[:,e]=self.proba_f_knowing_e[:,e]/max(1,sum(self.proba_f_knowing_e[:,e]))
+                self.proba_f_knowing_e[:,e]=self.proba_f_knowing_e[:,e]/(lambda x: x + (x==0))(sum(self.proba_f_knowing_e[:,e]))
             if verbose:
                 print "Iteration nb",it,". Perplexity :",self.get_perplexity()
         return
