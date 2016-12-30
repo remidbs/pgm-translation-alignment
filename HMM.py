@@ -7,8 +7,9 @@ class HMM:
         self.Imax = corpus.Imax  # max length of an english sentence
         self.corpus = corpus
 
-        # Rem : A better idea is to use the value returned by IBM1 to have a good init.
-        self.proba_f_knowing_e = np.ones((len(corpus.french_words),len(corpus.english_words))) *1.0 / len(self.corpus.english_words)
+        # Rem : A good idea is to use the value returned by IBM1 to have a good init.
+        # Tested : it seems to really improve the results !
+        self.proba_f_knowing_e = np.ones((len(corpus.french_words),len(corpus.english_words))) * 1. / len(self.corpus.english_words)
 
     def sfunction(self, x):
         # parameter function to compute penalty etc.
@@ -36,8 +37,9 @@ class HMM:
                 J = len(f)
                 e = self.corpus.english_sentences[s]
                 I = len(e)
+
                 alignment_probabilities = np.array([[self.sfunction(i1 - i2) for i2 in range(I)] for i1 in range(I)])
-                alignment_probabilities /= alignment_probabilities.sum(axis=1)
+                alignment_probabilities /= alignment_probabilities.sum(axis=1)[:,np.newaxis]
 
                 Q = np.ones((I,J))
 
@@ -45,7 +47,7 @@ class HMM:
                 # Return an estimation of best corresponding alignment
                 # Rem : first column of Q is assuming Q(before) = 1
                 Q[:,0]= np.array([self.proba_f_knowing_e[f[0],e[i]] * np.max(np.array([alignment_probabilities[i,i2] for i2 in range(I)])) for i in range(I)])
-                for j in range(2,J):
+                for j in range(1,J):
                     for i in range(I):
                         Q[i,j] = self.proba_f_knowing_e[f[j],e[i]] * np.max(np.array([alignment_probabilities[i,i2] * Q[i2, j-1] for i2 in range(I)]))
 
@@ -55,7 +57,7 @@ class HMM:
                 for j in range(J):
                     count[f[j],e[most_likely_alignment[j]]] += 1
 
-            self.proba_f_knowing_e = count/count.sum(axis=0)
+            self.proba_f_knowing_e = count/count.sum(axis=1)[:,np.newaxis]
             if verbose:
                 print "Iteration nb",it,". Perplexity :",self.get_perplexity()
         return
