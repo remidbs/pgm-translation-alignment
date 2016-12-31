@@ -28,34 +28,33 @@ class IBM1:
 
         # Train proba_f_knowing_e
         # pre compute sum(delta(f,f_js)) and sum(delta(e,e_is))
-        sum_delta_f = np.zeros((n_french_words, n_sentences))
-        sum_delta_e = np.zeros((n_english_words, n_sentences))
+        count_f = np.zeros((n_french_words, n_sentences))
+        count_e = np.zeros((n_english_words, n_sentences))
+        t0 = time.clock()
         for s in range(n_sentences):
             for f in range(n_french_words):
-                sum_delta_f[f,s] = self.corpus.french_sentences[s].count(f)
+                count_f[f,s] = self.corpus.french_sentences[s].count(f)
             for e in range(n_english_words):
-                sum_delta_e[e,s] = self.corpus.english_sentences[s].count(e)
+                count_e[e,s] = self.corpus.english_sentences[s].count(e)
         
         # initialize with uniform translation probabilities
         self.proba_f_knowing_e = np.ones((n_french_words,n_english_words))/n_french_words
 
         # iterative equation
         for it in range(n_iterations):
-            t0=time.clock()
-            for e in range(n_english_words):
-                for f in range(n_french_words):
-                    coeff = 0
-                    for s in range(n_sentences):
-                        temp=0
-                        for e_is in self.corpus.english_sentences[s]:
-                            temp += self.proba_f_knowing_e[f,e_is]
-                        coeff += sum_delta_f[f,s]*sum_delta_e[e,s]/temp
-                        
-                    self.proba_f_knowing_e[f,e] = coeff*self.proba_f_knowing_e[f,e]
-                # normalize each row
-                self.proba_f_knowing_e[:,e]=self.proba_f_knowing_e[:,e]/(lambda x: x + (x==0))(sum(self.proba_f_knowing_e[:,e]))
+            t0 = time.clock()
+            A = np.zeros((len(self.corpus.french_words), len(self.corpus.english_words)))
+            for s in range(n_sentences):
+                e = self.corpus.english_sentences[s]
+                temp1 = np.outer(count_f[:, s], count_e[:, s])
+                temp2 = np.transpose(np.tile(self.proba_f_knowing_e[:, e].sum(axis=1), (n_english_words, 1)))
+                A += temp1 / temp2
+
+            self.proba_f_knowing_e *= A
+            self.proba_f_knowing_e /= self.proba_f_knowing_e.sum(axis=0)[np.newaxis, :]
             if verbose:
-                print "Iteration nb",it,". Perplexity :",self.get_perplexity()," (",time.clock()-t0," sec)"
+                print "Iteration nb ",it,". Perplexity :",self.get_perplexity(), " (", time.clock()-t0," sec)"
+
         return
 
     def get_perplexity(self,):
@@ -64,16 +63,10 @@ class IBM1:
         for s in range(n_sentences):
             J = len(self.corpus.french_sentences[s])
             I = len(self.corpus.english_sentences[s])
-            for j in range(J):
-                temp = 0
-                for i in range(I):
-                    f = self.corpus.french_sentences[s][j]
-                    e = self.corpus.english_sentences[s][i]
-                    temp += self.proba_f_knowing_e[f,e]/I
-                perplexity = perplexity * temp
-                
-            perplexity = perplexity * self.proba_J_knowing_I[J,I]
-        return 1/math.pow(perplexity, 1.0/n_sentences)
+            f = self.corpus.french_sentences[s]
+            e = self.corpus.english_sentences[s]
+            perplexity *= (np.sum(self.proba_f_knowing_e[f,:][:,e])*self.proba_J_knowing_I[J,I]/I**J)**(1.0/n_sentences)
+        return 1/perplexity
 
     def get_viterbi_alignment(self, sentence_index = 0):
         f = self.corpus.french_sentences[sentence_index]

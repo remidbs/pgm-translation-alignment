@@ -8,6 +8,7 @@ import HMM
 
 print("loading the corpus...")
 corpus = Corpus.Corpus("eutrans/training", separator="#")
+#corpus = Corpus.Corpus("corpus.txt", separator="---")
 corpus.print_corpus_description()
 print("...done")
 
