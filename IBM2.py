@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 class IBM2:
     def __init__(self,corpus, penalization = 0.0):
@@ -28,6 +29,7 @@ class IBM2:
         
         # Train proba_f_knowing_e 
         for it in range(n_iterations):
+            t0 = time.clock()
             self.loglikelihood = 0.0
             count = np.zeros((len(self.corpus.french_words),len(self.corpus.english_words)))
             # position
@@ -51,7 +53,7 @@ class IBM2:
             self.proba_f_knowing_e = count/np.vectorize(lambda x : (x==0)*1 + x)(count.sum(axis=0)[np.newaxis,:])
             self.proba_f_knowing_e += 1.0/len(self.corpus.french_words)*(self.proba_f_knowing_e.sum(0) == 0)[np.newaxis,:]
             if verbose:           
-                print "Iteration nb",it,". Perplexity :",self.get_perplexity()
+                print "Iteration nb",it,". Perplexity :",self.get_perplexity()," (",time.clock()-t0," sec)"
         return
         
     def get_perplexity(self,recompute=False):

@@ -1,20 +1,21 @@
 import numpy as np
+import string
 
 
 class Corpus:
-    def __init__(self, filepath):
+    def __init__(self, filepath, separator ="---"):
         self.Jmax = -1  # max length of a french sentence
         self.Imax = -1  # max length of an english sentence
         self.french_words = set()
         self.english_words = set()
         self.french_sentences = list()
         self.english_sentences = list()
-        
+
         corpus = open(filepath)
         for line in corpus:
-            F, E = line.split("---")
-            F = F.split()
-            E = E.split()
+            F, E = line.split(separator)
+            F = F.translate(None, string.punctuation).split()
+            E = E.translate(None, string.punctuation).split()
             for f in F:
                 self.french_words.add(f)
             for e in E:
@@ -46,8 +47,8 @@ class Corpus:
             "number of english words :": len(self.english_words),
             "number of french sentences :": len(self.french_sentences),
             "number of english sentences :": len(self.english_sentences),
-            "maximal length of a french description :": self.Jmax,
-            "maximal length of an english description :": self.Imax
+            "maximal length of a french sentence :": self.Jmax,
+            "maximal length of an english sentence :": self.Imax
         }
 
     def print_corpus_description(self):

@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import time
 
 
 class IBM1:
@@ -27,8 +28,8 @@ class IBM1:
 
         # Train proba_f_knowing_e
         # pre compute sum(delta(f,f_js)) and sum(delta(e,e_is))
-        sum_delta_f = np.zeros((n_french_words,n_sentences))
-        sum_delta_e = np.zeros((n_english_words,n_sentences))
+        sum_delta_f = np.zeros((n_french_words, n_sentences))
+        sum_delta_e = np.zeros((n_english_words, n_sentences))
         for s in range(n_sentences):
             for f in range(n_french_words):
                 sum_delta_f[f,s] = self.corpus.french_sentences[s].count(f)
@@ -40,6 +41,7 @@ class IBM1:
 
         # iterative equation
         for it in range(n_iterations):
+            t0=time.clock()
             for e in range(n_english_words):
                 for f in range(n_french_words):
                     coeff = 0
@@ -53,7 +55,7 @@ class IBM1:
                 # normalize each row
                 self.proba_f_knowing_e[:,e]=self.proba_f_knowing_e[:,e]/(lambda x: x + (x==0))(sum(self.proba_f_knowing_e[:,e]))
             if verbose:
-                print "Iteration nb",it,". Perplexity :",self.get_perplexity()
+                print "Iteration nb",it,". Perplexity :",self.get_perplexity()," (",time.clock()-t0," sec)"
         return
 
     def get_perplexity(self,):
@@ -73,7 +75,7 @@ class IBM1:
             perplexity = perplexity * self.proba_J_knowing_I[J,I]
         return 1/math.pow(perplexity, 1.0/n_sentences)
 
-    def get_viterbi_alignment(self,sentence_index = 0):
+    def get_viterbi_alignment(self, sentence_index = 0):
         f = self.corpus.french_sentences[sentence_index]
         e = self.corpus.english_sentences[sentence_index]        
         most_likely_alignment = self.proba_f_knowing_e[f,:][:,e].argmax(axis=1)

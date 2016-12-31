@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 
 class HMM:
@@ -21,8 +22,8 @@ class HMM:
         n_sentences = len(self.corpus.english_sentences)
         n_french_words = len(self.corpus.french_words)
         n_english_words = len(self.corpus.english_words)
-
         for it in range(n_iterations):
+            t0 = time.clock()
             # We want to alternate parameter estimation and alignment finding
             # For given parameters, the optimal alignment is computed with Q(i,j)
             # For given optimal alignment, the parameters p(f|e) are derived from MLE.
@@ -59,7 +60,7 @@ class HMM:
 
             self.proba_f_knowing_e = count/count.sum(axis=1)[:,np.newaxis]
             if verbose:
-                print "Iteration nb",it,". Perplexity :",self.get_perplexity()
+                print "Iteration nb",it,". Perplexity :",self.get_perplexity(),"(",time.clock()-t0," sec)"
         return
         
     def get_perplexity(self,):

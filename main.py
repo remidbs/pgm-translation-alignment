@@ -7,7 +7,7 @@ import HMM
 
 
 print("loading the corpus...")
-corpus = Corpus.Corpus("corpus.txt")
+corpus = Corpus.Corpus("eutrans/training", separator="#")
 corpus.print_corpus_description()
 print("...done")
 
@@ -63,7 +63,7 @@ print(" ")
 hmm = HMM.HMM(corpus)
 hmm.proba_f_knowing_e = ibm1.proba_f_knowing_e
 print("Starting to train HMM...")
-hmm.train(10)
+hmm.train(10, True)
 print("...done")
 f2eTer = np.argmax(hmm.proba_f_knowing_e, axis=1)
 print(" ")

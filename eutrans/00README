@@ -1,0 +1,64 @@
+----------------------------------------------------------------------------
+This directory contains the standard corpus and early results for the
+Spanish-English EuTrans-I (benchmark) data.
+
+  The organization is as follows:
+
+  FILES:
+    00README: this file.
+    training: the file containing the first 10,000 pairs of sentences
+       of the standard EuTrans-I corpus (partition 1), including repetitions.
+    test: 3,000 pairs from EuTrans-I. They include no repetitions and do not 
+       overlap with the training.  The test sentences contain a few words NOT 
+       included in training.
+    test_closed (2,996 pairs): The same as test, but excluding the only four 
+       lines that contain words NOT included in training.
+
+  DIRECTORIES:
+    voc: vocabularies of training and test data.
+
+............................................................................
+In using this corpus you agree that:
+
+1. This corpus may be used free of cost for non commercial purposes.
+
+2. If commercial use is intended, please first contact:
+   Dr. Enrique Vidal
+   Instituto Tecnologico de Informatica
+   Cno. de Vera s/n
+   E - 46071 Valencia
+   tel: +34 / 96 387 93 51
+   fax: +34 / 96 387 73 58
+   e-mail: evidal@iti.upv.es
+
+3. In case of redistribution, this file must be distributed as is
+   along with the corpus.
+
+4. Any publication derived from the use of this corpus must reference
+   the EuTrans project ("Example-based langUage TRANslation Systems",
+   EU Esprit #30268) and appropriate scholarly citation(s), such as:
+
+   J.C. Amengual, J.M. Benedí, F. Casacuberta, A. Castaño,
+   A. Castellanos, V. Jiménez, D. Llorens, A. Marzal, F. Prat,
+   E. Vidal, and J.M. Vilar: "Using categories in the EuTrans
+   system". In ACL-ELSNET Workshoop on Spoken Language Translation,
+   pages 44-53, Madrid (Spain), July 1997.
+
+   J.C.Amengual, J.M.Benedí F.Casacuberta, A.Castaño, A.Castellanos,
+   V.Jiménez, D.Llorens, A.Marzal, M.Pastor, F.Prat, E.Vidal,
+   J.M.Vilar: "The EuTrans-I Speech Translation System". Machine
+   Translation. Vol.15, pp.75-103, 2001.
+
+   F.Casacuberta, H.Ney, F.J.Och, J.M.Vilar, E.Vidal, S.Barrachina,
+   I.García-Varea, C.Martínez D.Llorens, S.Molau, F.Nevado, M.Pastor,
+   D.Picó, A.Sanchís: "Some ap- proaches to statistical and
+   finite-state speech-to-speech translation". Computer Speech and
+   Language, Vol.18, pp.25-47, 2004.
+
+   F.Casacuberta, E.Vidal, D.Picó: "Inference of finite-state
+   transducers from regular languages". Pattern Recognition. Vol.38,
+   pp.1431-1443, 2005.
+
+   F.Casacuberta, E.Vidal: "Learning finite-state models for machine
+   translation". Machine Learning, Vol.66(1), pp.69-91, 2007.
+----------------------------------------------------------------------------
