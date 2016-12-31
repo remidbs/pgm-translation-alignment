@@ -70,7 +70,7 @@ class IBM2:
                 alignment_probabilities *= self.proba_f_knowing_e[f,:][:,e]
                 self.loglikelihood += np.sum(np.log(alignment_probabilities.sum(axis=1)))
                 self.loglikelihood += np.log(self.proba_J_knowing_I[J,I])
-        return np.exp(-self.loglikelihood/len(self.corpus.french_sentences))
+        return np.exp(-self.loglikelihood/np.sum([len(self.corpus.french_sentences[s]) for s in range(len(self.corpus.french_sentences))]))
         
     def get_viterbi_alignment(self,sentence_index = 0):
         f = self.corpus.french_sentences[sentence_index]

@@ -46,6 +46,7 @@ f2e = np.argmax(ibm2.proba_f_knowing_e,axis=1)
 # ibm2bis = IBM2.IBM2(corpus,penalization=9.0)
 # ibm2bis.train(10,True)
 # f2ebis = np.argmax(ibm2bis.proba_f_knowing_e,axis=1)
+raw_input("Press Enter to continue...")
 
 print "IBM2 Translations :"
 for i in range(len(corpus.french_words)):
