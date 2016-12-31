@@ -30,7 +30,7 @@ class IBM1:
         # pre compute sum(delta(f,f_js)) and sum(delta(e,e_is))
         count_f = np.zeros((n_french_words, n_sentences))
         count_e = np.zeros((n_english_words, n_sentences))
-        t0 = time.clock()
+        # t0 = time.clock()
         for s in range(n_sentences):
             for f in range(n_french_words):
                 count_f[f,s] = self.corpus.french_sentences[s].count(f)
@@ -44,14 +44,31 @@ class IBM1:
         for it in range(n_iterations):
             t0 = time.clock()
             A = np.zeros((len(self.corpus.french_words), len(self.corpus.english_words)))
+            # t0_bis = time.clock()
+            # print "t0_bis - t0", t0_bis - t0
             for s in range(n_sentences):
+                t1_ante = time.clock()
                 e = self.corpus.english_sentences[s]
+                # t1 = time.clock()
                 temp1 = np.outer(count_f[:, s], count_e[:, s])
+                # t1_bis = time.clock()
                 temp2 = np.transpose(np.tile(self.proba_f_knowing_e[:, e].sum(axis=1), (n_english_words, 1)))
+                t1_ter_ante = time.clock()
                 A += temp1 / temp2
+                t1_ter = time.clock()
 
+                if (s % 1000) == 0:
+                    # print "t1 - t1_ante", t1 - t1_ante
+                    # print "t1_bis - t1", t1_bis - t1
+                    # print "t1_ter - t1_bis", t1_ter - t1_bis
+                    print "Calcul A += temp1/ temp2", t1_ter - t1_ter_ante
+                    print "Duree d une etape complete :", t1_ter - t1_ante
+
+            t2 = time.clock()
             self.proba_f_knowing_e *= A
             self.proba_f_knowing_e /= self.proba_f_knowing_e.sum(axis=0)[np.newaxis, :]
+            t2_bis = time.clock()
+            print "t2_bis - t2", t2_bis - t2
             if verbose:
                 print "Iteration nb ",it,". Perplexity :",self.get_perplexity(), " (", time.clock()-t0," sec)"
 

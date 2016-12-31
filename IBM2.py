@@ -1,6 +1,7 @@
 import numpy as np
 import time
 
+
 class IBM2:
     def __init__(self,corpus, penalization = 0.0):
         self.Jmax = corpus.Jmax # max length of a french sentence
@@ -24,7 +25,7 @@ class IBM2:
             j = len(self.corpus.french_sentences[s])
             i = len(self.corpus.english_sentences[s])
             self.proba_J_knowing_I[j,i] += 1
-        #normalization (paying attention to columns not encountered to avoid dividing by zero)    
+        # normalization (paying attention to columns not encountered to avoid dividing by zero)
         self.proba_J_knowing_I /= np.vectorize(lambda x : (x==0)*1 + x)(self.proba_J_knowing_I.sum(axis=0))[np.newaxis,:]
         
         # Train proba_f_knowing_e 
@@ -49,7 +50,7 @@ class IBM2:
                 for j in range(most_likely_alignment.shape[0]):
                     count[f[j],e[most_likely_alignment[j]]] += 1
             # parameter estimation
-            #normalization (paying attention to columns not encountered to avoid dividing by zero)    
+            # normalization (paying attention to columns not encountered to avoid dividing by zero)
             self.proba_f_knowing_e = count/np.vectorize(lambda x : (x==0)*1 + x)(count.sum(axis=0)[np.newaxis,:])
             self.proba_f_knowing_e += 1.0/len(self.corpus.french_words)*(self.proba_f_knowing_e.sum(0) == 0)[np.newaxis,:]
             if verbose:           
