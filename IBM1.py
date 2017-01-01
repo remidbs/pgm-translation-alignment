@@ -8,6 +8,7 @@ class IBM1:
         self.Jmax = corpus.Jmax  # max length of a french sentence
         self.Imax = corpus.Imax  # max length of an english sentence
         self.corpus = corpus
+        self.loglikelihood = 0.0
         self.proba_J_knowing_I = np.zeros((self.Jmax+1, self.Imax+1)) # coefficient [j,i] contains P(j|i)
         self.proba_f_knowing_e = np.zeros((len(corpus.french_words),len(corpus.english_words)))
     
@@ -52,21 +53,13 @@ class IBM1:
                 # t1 = time.clock()
                 temp1 = np.outer(count_f[:, s], count_e[:, s])
                 # t1_bis = time.clock()
-                temp2 = np.transpose(np.tile(self.proba_f_knowing_e[:, e].sum(axis=1), (n_english_words, 1)))
-                #if(not temp2.all()):
-                #    print "e",e
-                #    print "s",s
-                #    print "self.proba_f_knowing_e[:, e]", self.proba_f_knowing_e[:, e]
-                #    print "self.proba_f_knowing_e[:, e].sum()", self.proba_f_knowing_e[:, e].sum(axis=1)
+                temp2 = np.tile( (lambda x : (x==0)*1 + x)(self.proba_f_knowing_e[:, e].sum(axis=1)), (n_english_words, 1) )
                 t1_ter_ante = time.clock()
-                
-                A += temp1 / (lambda x : (x==0)*1 + x)(temp2)
+                A += temp1 / np.transpose(temp2)
                 t1_ter = time.clock()
 
                 if (s % 1000) == 0:
-                    # print "t1 - t1_ante", t1 - t1_ante
-                    # print "t1_bis - t1", t1_bis - t1
-                    # print "t1_ter - t1_bis", t1_ter - t1_bis
+
                     print "Calcul A += temp1/ temp2", t1_ter - t1_ter_ante
                     print "Duree d une etape complete :", t1_ter - t1_ante
 
@@ -81,15 +74,17 @@ class IBM1:
         return
 
     def get_perplexity(self,):
+        self.loglikelihood = 0.0
         n_sentences = len(self.corpus.english_sentences)
-        perplexity = 1
         for s in range(n_sentences):
             J = len(self.corpus.french_sentences[s])
             I = len(self.corpus.english_sentences[s])
             f = self.corpus.french_sentences[s]
             e = self.corpus.english_sentences[s]
-            perplexity *= (np.sum(self.proba_f_knowing_e[f,:][:,e])*self.proba_J_knowing_I[J,I]/I**J)**(1.0/n_sentences)
-        return 1/perplexity
+            self.loglikelihood += np.sum(np.log(np.sum(self.proba_f_knowing_e[f,:][:,e],axis=1)))
+            self.loglikelihood += np.log(self.proba_J_knowing_I[J,I])
+            self.loglikelihood -= J*np.log(I)
+        return np.exp(-self.loglikelihood/np.sum([len(s) for s in self.corpus.french_sentences]))
 
     def get_viterbi_alignment(self, sentence_index = 0):
         f = self.corpus.french_sentences[sentence_index]
