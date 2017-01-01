@@ -1,5 +1,6 @@
 import numpy as np
 import time
+import matplotlib.pyplot as plt
 
 
 class IBM2:
@@ -20,6 +21,7 @@ class IBM2:
     
     def train(self,n_iterations, verbose=False):
         n_sentences = len(self.corpus.french_sentences)
+        perplexity_evolution = np.zeros(n_iterations)
         # Train proba_J_knowing_I 
         for s in range(n_sentences):
             j = len(self.corpus.french_sentences[s])
@@ -53,9 +55,13 @@ class IBM2:
             # normalization (paying attention to columns not encountered to avoid dividing by zero)
             self.proba_f_knowing_e = count/np.vectorize(lambda x : (x==0)*1 + x)(count.sum(axis=0)[np.newaxis,:])
             self.proba_f_knowing_e += 1.0/len(self.corpus.french_words)*(self.proba_f_knowing_e.sum(0) == 0)[np.newaxis,:]
-            if verbose:           
-                print "Iteration nb",it,". Perplexity :",self.get_perplexity()," (",time.clock()-t0," sec)"
-        return
+
+            perplexity = self.get_perplexity()
+            perplexity_evolution[it] = perplexity
+
+            if verbose:
+                print "Iteration nb",it,". Perplexity :", perplexity," (",time.clock()-t0," sec)"
+        return perplexity_evolution
         
     def get_perplexity(self,recompute=False):
         if recompute:
@@ -88,3 +94,8 @@ class IBM2:
         
     def print_viterbi_alignment(self, sentence_index = 0):
         self.corpus.print_alignment(sentence_index, self.get_viterbi_alignment(sentence_index))
+
+    def print_perplexity_evolution(self, perplexity_evolution):
+        plt.plot(perplexity_evolution)
+        plt.title("Evolution of perplexity for IBM2")
+        plt.show()

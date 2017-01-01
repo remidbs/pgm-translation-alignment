@@ -1,6 +1,6 @@
 import numpy as np
 import time
-
+import matplotlib.pyplot as plt
 
 class HMM:
     def __init__(self,corpus):
@@ -22,6 +22,9 @@ class HMM:
         n_sentences = len(self.corpus.english_sentences)
         n_french_words = len(self.corpus.french_words)
         n_english_words = len(self.corpus.english_words)
+
+        perplexity_evolution = np.zeros(n_iterations)
+
         for it in range(n_iterations):
             t0 = time.clock()
             # We want to alternate parameter estimation and alignment finding
@@ -59,9 +62,18 @@ class HMM:
                     count[f[j],e[most_likely_alignment[j]]] += 1
 
             self.proba_f_knowing_e = count/count.sum(axis=1)[:,np.newaxis]
+
+            perplexity = self.get_perplexity()
+            perplexity_evolution[it] = perplexity
+
             if verbose:
-                print "Iteration nb",it,". Perplexity :",self.get_perplexity(),"(",time.clock()-t0," sec)"
-        return
+                print "Iteration nb",it,". Perplexity :",perplexity,"(",time.clock()-t0," sec)"
+        return perplexity_evolution
         
     def get_perplexity(self,):
         return -1
+
+    def print_perplexity_evolution(self, perplexity_evolution):
+        plt.plot(perplexity_evolution)
+        plt.title("Evolution of perplexity for HMM")
+        plt.show()

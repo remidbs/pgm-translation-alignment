@@ -7,8 +7,8 @@ import HMM
 
 
 print("loading the corpus...")
-#corpus = Corpus.Corpus("eutrans/training", separator="#")
-corpus = Corpus.Corpus("corpus.txt", separator="---")
+corpus = Corpus.Corpus("eutrans/training", separator="#")
+#corpus = Corpus.Corpus("corpus.txt", separator="---")
 corpus.print_corpus_description()
 print("...done")
 
@@ -41,7 +41,7 @@ ibm2 = IBM2.IBM2(corpus)
 ibm2.proba_f_knowing_e = np.load("ibm1_proba_f_knowing_e.npy")
 #ibm2.proba_f_knowing_e = ibm1.proba_f_knowing_e
 print("starting to train IBM2...")
-ibm2.train(10,True)
+imb2perplexityevol = ibm2.train(10,True)
 print("...done")
 f2e = np.argmax(ibm2.proba_f_knowing_e,axis=1)
 
@@ -53,6 +53,8 @@ raw_input("Press Enter to continue...")
 print "IBM2 Translations :"
 for i in range(len(corpus.french_words)):
     print corpus.french_words[i], " --> ", corpus.english_words[f2e[i]],"," # , corpus.english_words[f2ebis[i]]
+
+ibm2.print_perplexity_evolution(imb2perplexityevol)
 
 #ibm2.print_viterbi_alignment(0)
 # ibm2bis.print_viterbi_alignment(0)
@@ -67,10 +69,13 @@ hmm = HMM.HMM(corpus)
 #hmm.proba_f_knowing_e = ibm1.proba_f_knowing_e
 hmm.proba_f_knowing_e =np.load("ibm1_proba_f_knowing_e.npy")
 print("Starting to train HMM...")
-hmm.train(10, True)
+hmmperplexityevol = hmm.train(10, True)
 print("...done")
 f2eTer = np.argmax(hmm.proba_f_knowing_e, axis=1)
 print(" ")
 print("HMM Translations :")
 for i in range(len(corpus.french_words)):
     print corpus.french_words[i], " --> ", corpus.english_words[f2eTer[i]]
+
+### Not done yet
+# hmm.print_perplexity_evolution(hmmperplexityevol)
