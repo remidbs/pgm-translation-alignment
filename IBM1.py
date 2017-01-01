@@ -53,8 +53,14 @@ class IBM1:
                 temp1 = np.outer(count_f[:, s], count_e[:, s])
                 # t1_bis = time.clock()
                 temp2 = np.transpose(np.tile(self.proba_f_knowing_e[:, e].sum(axis=1), (n_english_words, 1)))
+                #if(not temp2.all()):
+                #    print "e",e
+                #    print "s",s
+                #    print "self.proba_f_knowing_e[:, e]", self.proba_f_knowing_e[:, e]
+                #    print "self.proba_f_knowing_e[:, e].sum()", self.proba_f_knowing_e[:, e].sum(axis=1)
                 t1_ter_ante = time.clock()
-                A += temp1 / temp2
+                
+                A += temp1 / (lambda x : (x==0)*1 + x)(temp2)
                 t1_ter = time.clock()
 
                 if (s % 1000) == 0:
@@ -66,7 +72,7 @@ class IBM1:
 
             t2 = time.clock()
             self.proba_f_knowing_e *= A
-            self.proba_f_knowing_e /= self.proba_f_knowing_e.sum(axis=0)[np.newaxis, :]
+            self.proba_f_knowing_e /= (lambda x : (x==0)*1 + x)(self.proba_f_knowing_e.sum(axis=0)[np.newaxis, :])
             t2_bis = time.clock()
             print "t2_bis - t2", t2_bis - t2
             if verbose:

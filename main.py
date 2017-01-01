@@ -8,7 +8,7 @@ import HMM
 
 print("loading the corpus...")
 corpus = Corpus.Corpus("eutrans/training", separator="#")
-# corpus = Corpus.Corpus("corpus.txt", separator="---")
+#corpus = Corpus.Corpus("corpus.txt", separator="---")
 corpus.print_corpus_description()
 print("...done")
 
@@ -38,7 +38,8 @@ print(" ")
 print("*"*50)
 print(" ")
 ibm2 = IBM2.IBM2(corpus)
-ibm2.proba_f_knowing_e = ibm1.proba_f_knowing_e
+ibm2.proba_f_knowing_e = np.load("ibm1_proba_f_knowing_e.npy")
+#ibm2.proba_f_knowing_e = ibm1.proba_f_knowing_e
 print("starting to train IBM2...")
 ibm2.train(10,True)
 print("...done")
@@ -63,7 +64,8 @@ print(" ")
 print("*"*50)
 print(" ")
 hmm = HMM.HMM(corpus)
-hmm.proba_f_knowing_e = ibm1.proba_f_knowing_e
+#hmm.proba_f_knowing_e = ibm1.proba_f_knowing_e
+hmm.proba_f_knowing_e =np.load("ibm1_proba_f_knowing_e.npy")
 print("Starting to train HMM...")
 hmm.train(10, True)
 print("...done")
