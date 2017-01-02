@@ -99,8 +99,3 @@ class HMM:
             #add normalization likelihood
             loglikelihood += np.log(self.proba_J_knowing_I[J,I])
         return np.exp(-loglikelihood/np.sum([len(self.corpus.french_sentences[s]) for s in range(len(self.corpus.french_sentences))]))
-
-    def print_perplexity_evolution(self, perplexity_evolution):
-        plt.plot(perplexity_evolution)
-        plt.title("Evolution of perplexity for HMM")
-        plt.show()

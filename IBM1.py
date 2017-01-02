@@ -68,7 +68,7 @@ class IBM1:
             self.proba_f_knowing_e *= A
             self.proba_f_knowing_e /= (lambda x : (x==0)*1 + x)(self.proba_f_knowing_e.sum(axis=0)[np.newaxis, :])
             t2_bis = time.clock()
-            print "t2_bis - t2", t2_bis - t2
+            # print "t2_bis - t2", t2_bis - t2
             perplexity = self.get_perplexity()
             perplexity_evolution[it] = perplexity
             if verbose:
