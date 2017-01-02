@@ -7,7 +7,9 @@ class HMM:
         self.Jmax = corpus.Jmax  # max length of a french sentence
         self.Imax = corpus.Imax  # max length of an english sentence
         self.corpus = corpus
-
+        self.proba_J_knowing_I = np.zeros((self.Jmax+1, self.Imax+1)) # coefficient [j,i] contains P(j|i)
+        self.most_likely_alignment = [None]*(len(self.corpus.french_sentences))
+        
         # Rem : A good idea is to use the value returned by IBM1 to have a good init.
         # Tested : it seems to really improve the results !
         self.proba_f_knowing_e = np.ones((len(corpus.french_words),len(corpus.english_words))) * 1. / len(self.corpus.english_words)
@@ -25,6 +27,16 @@ class HMM:
 
         perplexity_evolution = np.zeros(n_iterations)
 
+        # Train proba_J_knowing_I 
+        for s in range(n_sentences):
+            j = len(self.corpus.french_sentences[s])
+            i = len(self.corpus.english_sentences[s])
+            self.proba_J_knowing_I[j,i] += 1
+        # normalization (paying attention to columns not encountered to avoid dividing by zero)
+        self.proba_J_knowing_I /= np.vectorize(lambda x : (x==0)*1 + x)(self.proba_J_knowing_I.sum(axis=0))[np.newaxis,:]
+
+
+        # Train proba_f_knowing_e 
         for it in range(n_iterations):
             t0 = time.clock()
             # We want to alternate parameter estimation and alignment finding
@@ -55,11 +67,11 @@ class HMM:
                     for i in range(I):
                         Q[i,j] = self.proba_f_knowing_e[f[j],e[i]] * np.max(np.array([alignment_probabilities[i,i2] * Q[i2, j-1] for i2 in range(I)]))
 
-                most_likely_alignment = np.array([np.argmax(Q[:,j]) for j in range(J)])
+                self.most_likely_alignment[s] = np.array([np.argmax(Q[:,j]) for j in range(J)])
 
                 # Now we can easily derive from MLE the updated expression of p(f|e) maximizing p(f^J | e^I)
                 for j in range(J):
-                    count[f[j],e[most_likely_alignment[j]]] += 1
+                    count[f[j],e[self.most_likely_alignment[s][j]]] += 1
 
             self.proba_f_knowing_e = count/count.sum(axis=1)[:,np.newaxis]
 
@@ -71,7 +83,19 @@ class HMM:
         return perplexity_evolution
         
     def get_perplexity(self,):
-        return -1
+        loglikelihood = 0.0
+        for s in range(len(self.corpus.french_sentences)):
+            f = self.corpus.french_sentences[s]
+            J = len(f)
+            e = self.corpus.english_sentences[s]
+            I = len(e)
+            #add alignments likelihood
+            loglikelihood += np.sum(np.log(self.sfunction(self.most_likely_alignment[s][1:]-self.most_likely_alignment[s][:-1])))
+            #add translation likelihood
+            loglikelihood += np.sum(np.log([self.proba_f_knowing_e[f[j],e[self.most_likely_alignment[s][j]]] for j in range(J)]))
+            #add normalization likelihood
+            loglikelihood += np.log(self.proba_J_knowing_I[J,I])
+        return np.exp(-loglikelihood/np.sum([len(self.corpus.french_sentences[s]) for s in range(len(self.corpus.french_sentences))]))
 
     def print_perplexity_evolution(self, perplexity_evolution):
         plt.plot(perplexity_evolution)
