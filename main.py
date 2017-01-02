@@ -20,7 +20,8 @@ print("Building IBM1 item...")
 ibm1 = IBM1.IBM1(corpus)
 print("...done")
 print("starting to train IBM1...")
-ibm1.train(10, verbose=True)
+ibm1_nb_training_step = 10
+imb1perplexityevol = ibm1.train(ibm1_nb_training_step, verbose=True)
 print("...done")
 
 print "\nIBM1 perplexity : ",ibm1.get_perplexity(),"\n"
@@ -41,20 +42,20 @@ ibm2 = IBM2.IBM2(corpus)
 ibm2.proba_f_knowing_e = np.load("ibm1_proba_f_knowing_e.npy")
 #ibm2.proba_f_knowing_e = ibm1.proba_f_knowing_e
 print("starting to train IBM2...")
-imb2perplexityevol = ibm2.train(10,True)
+ibm2_nb_training_step = 10
+imb2perplexityevol = ibm2.train(ibm2_nb_training_step,True)
 print("...done")
 f2e = np.argmax(ibm2.proba_f_knowing_e,axis=1)
 
 # ibm2bis = IBM2.IBM2(corpus,penalization=9.0)
 # ibm2bis.train(10,True)
 # f2ebis = np.argmax(ibm2bis.proba_f_knowing_e,axis=1)
-raw_input("Press Enter to continue...")
+# # raw_input("Press Enter to continue...")
 
 print "IBM2 Translations :"
 for i in range(len(corpus.french_words)):
     print corpus.french_words[i], " --> ", corpus.english_words[f2e[i]],"," # , corpus.english_words[f2ebis[i]]
 
-ibm2.print_perplexity_evolution(imb2perplexityevol)
 
 #ibm2.print_viterbi_alignment(0)
 # ibm2bis.print_viterbi_alignment(0)
@@ -69,7 +70,8 @@ hmm = HMM.HMM(corpus)
 #hmm.proba_f_knowing_e = ibm1.proba_f_knowing_e
 hmm.proba_f_knowing_e =np.load("ibm1_proba_f_knowing_e.npy")
 print("Starting to train HMM...")
-hmmperplexityevol = hmm.train(10, True)
+hmm_nb_training_step = 10
+hmmperplexityevol = hmm.train(hmm_nb_training_step, True)
 print("...done")
 f2eTer = np.argmax(hmm.proba_f_knowing_e, axis=1)
 print(" ")
@@ -77,5 +79,21 @@ print("HMM Translations :")
 for i in range(len(corpus.french_words)):
     print corpus.french_words[i], " --> ", corpus.english_words[f2eTer[i]]
 
-### Not done yet
-# hmm.print_perplexity_evolution(hmmperplexityevol)
+# a short function to do a nice plot
+# meme si indique comme non utilise, seaborn change l allure du plot donc faut le garder!
+import matplotlib.pyplot as plt
+import seaborn
+
+
+def plot_perplexity_evol():
+    Y0 = imb1perplexityevol
+    Y1 = np.insert(imb2perplexityevol, 0, Y0[-1])
+    Y2 = np.insert(hmmperplexityevol, 0, Y0[-1])
+    plt.plot(Y0, label="ibm1 perplexity")
+    plt.plot(range(ibm1_nb_training_step-1,ibm1_nb_training_step + ibm2_nb_training_step), Y1, label="ibm2 perplexity")
+    plt.plot(range(ibm1_nb_training_step-1,ibm1_nb_training_step + hmm_nb_training_step), Y2, label="hmm perplexity")
+    plt.title("Evolution of perplexity: IBM1 pre-training - comparison of IBM2 and HMM")
+    plt.legend()
+    plt.show()
+
+plot_perplexity_evol()

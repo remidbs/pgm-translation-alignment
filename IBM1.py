@@ -1,7 +1,6 @@
 import numpy as np
 import math
 import time
-import matplotlib.pyplot as plt
 
 
 class IBM1:
@@ -60,10 +59,10 @@ class IBM1:
                 A += temp1 / np.transpose(temp2)
                 t1_ter = time.clock()
 
-                if (s % 1000) == 0:
-
-                    print "Calcul A += temp1/ temp2", t1_ter - t1_ter_ante
-                    print "Duree d une etape complete :", t1_ter - t1_ante
+                ### Uncomment if you want to see how much time each iteration takes
+                # if (s % 1000) == 0:
+                #     print "Calcul A += temp1/ temp2", t1_ter - t1_ter_ante
+                #     print "Duree d une etape complete :", t1_ter - t1_ante
 
             t2 = time.clock()
             self.proba_f_knowing_e *= A
@@ -98,8 +97,3 @@ class IBM1:
         
     def print_viterbi_alignment(self, sentence_index = 0):
         self.corpus.print_alignment(sentence_index, self.get_viterbi_alignment(sentence_index))
-
-    def print_perplexity_evolution(self, perplexity_evolution):
-        plt.plot(perplexity_evolution)
-        plt.title("Evolution of perplexity for IBM1")
-        plt.show()

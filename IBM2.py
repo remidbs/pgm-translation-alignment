@@ -102,8 +102,3 @@ class IBM2:
         
     def print_viterbi_alignment(self, sentence_index = 0):
         self.corpus.print_alignment(sentence_index, self.get_viterbi_alignment(sentence_index))
-
-    def print_perplexity_evolution(self, perplexity_evolution):
-        plt.plot(perplexity_evolution)
-        plt.title("Evolution of perplexity for IBM2")
-        plt.show()
