@@ -93,8 +93,10 @@ class HMM:
             J = len(f)
             e = self.corpus.english_sentences[s]
             I = len(e)
+            alignment_probabilities = np.array([[self.sfunction(i1 - i2) for i2 in range(I)] for i1 in range(I)])
+            alignment_probabilities /= alignment_probabilities.sum(axis=1)[:,np.newaxis]
             #add alignments likelihood
-            loglikelihood += np.sum(np.log(self.sfunction(self.most_likely_alignment[s][1:]-self.most_likely_alignment[s][:-1])))
+            loglikelihood += np.sum(np.log([alignment_probabilities[self.most_likely_alignment[s][j],self.most_likely_alignment[s][j-1]] for j in range(J)]))
             #add translation likelihood
             loglikelihood += np.sum(np.log([self.proba_f_knowing_e[f[j],e[self.most_likely_alignment[s][j]]] for j in range(J)]))
             #add normalization likelihood
