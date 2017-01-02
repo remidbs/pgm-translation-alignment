@@ -20,7 +20,7 @@ print("Building IBM1 item...")
 ibm1 = IBM1.IBM1(corpus)
 print("...done")
 print("starting to train IBM1...")
-ibm1_nb_training_step = 10
+ibm1_nb_training_step = 0
 imb1perplexityevol = ibm1.train(ibm1_nb_training_step, verbose=True)
 print("...done")
 
@@ -39,10 +39,10 @@ print(" ")
 print("*"*50)
 print(" ")
 ibm2 = IBM2.IBM2(corpus)
-ibm2.proba_f_knowing_e = np.load("ibm1_proba_f_knowing_e.npy")
-#ibm2.proba_f_knowing_e = ibm1.proba_f_knowing_e
+#ibm2.proba_f_knowing_e = np.load("ibm1_proba_f_knowing_e.npy")
+ibm2.proba_f_knowing_e = ibm1.proba_f_knowing_e
 print("starting to train IBM2...")
-ibm2_nb_training_step = 10
+ibm2_nb_training_step = 0
 imb2perplexityevol = ibm2.train(ibm2_nb_training_step,True)
 print("...done")
 f2e = np.argmax(ibm2.proba_f_knowing_e,axis=1)
@@ -67,10 +67,10 @@ print(" ")
 print("*"*50)
 print(" ")
 hmm = HMM.HMM(corpus)
-#hmm.proba_f_knowing_e = ibm1.proba_f_knowing_e
-hmm.proba_f_knowing_e =np.load("ibm1_proba_f_knowing_e.npy")
+#hmm.proba_f_knowing_e =np.load("ibm1_proba_f_knowing_e.npy")
+hmm.proba_f_knowing_e = ibm1.proba_f_knowing_e
 print("Starting to train HMM...")
-hmm_nb_training_step = 10
+hmm_nb_training_step = 0
 hmmperplexityevol = hmm.train(hmm_nb_training_step, True)
 print("...done")
 f2eTer = np.argmax(hmm.proba_f_knowing_e, axis=1)
