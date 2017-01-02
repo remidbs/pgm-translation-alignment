@@ -20,7 +20,7 @@ print("Building IBM1 item...")
 ibm1 = IBM1.IBM1(corpus)
 print("...done")
 print("starting to train IBM1...")
-ibm1_nb_training_step = 20
+ibm1_nb_training_step = 10
 imb1perplexityevol = ibm1.train(ibm1_nb_training_step, verbose=True)
 print("...done")
 
@@ -31,8 +31,8 @@ print "IBM1 Translations :"
 for i in range(len(corpus.french_words)):
     print corpus.french_words[i], " --> ", corpus.english_words[f2e[i]]
 
-ibm1.print_viterbi_alignment(0)
-ibm1.print_viterbi_alignment(4)
+#ibm1.print_viterbi_alignment(0)
+#ibm1.print_viterbi_alignment(4)
 
 #%% Testing IBM2
 print(" ")

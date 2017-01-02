@@ -23,7 +23,7 @@ class IBM2:
         elif mode == "slowdecrease":
             return 1./(1. + np.abs(x))
         elif mode == "gaussian":
-            return np.exp(-x*x)/np.sqrt(2 * np.pi)
+            return np.exp(-x*x / (2. * self.Imax))/np.sqrt(2 * np.pi)
         else:
             print("non valid mode for the r function")
     
