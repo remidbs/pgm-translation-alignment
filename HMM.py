@@ -1,6 +1,7 @@
 import numpy as np
 import time
 
+
 class HMM:
     def __init__(self,corpus):
         self.Jmax = corpus.Jmax  # max length of a french sentence
@@ -13,7 +14,7 @@ class HMM:
         # Tested : it seems to really improve the results !
         self.proba_f_knowing_e = np.ones((len(corpus.french_words),len(corpus.english_words))) * 1. / len(self.corpus.english_words)
 
-    def sfunction(self, x, mode = "slowdecrease"):
+    def sfunction(self, x, mode="gaussian"):
         # parameter function to compute penalty etc.
         if mode == "slowdecrease":
             return 1./(1. + np.abs(x))

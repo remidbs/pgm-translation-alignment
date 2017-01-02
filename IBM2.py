@@ -16,7 +16,7 @@ class IBM2:
     # r computes the unnormalized probability of an alignment p(i|j,J,I)
     # the penalization argument must be set low to get uniform alignement probabilities
     # mode should belong to "gaussian", "slowdecrease" or "wtf_random_delbouys"
-    def r(self,x, mode = "slowdecrease"):
+    def r(self,x, mode = "gaussian"):
         if mode == "wtf_random_delbouys":
             y = 1.0*self.Jmax-np.abs(x)-self.penalization
             return y*(y>=0)
