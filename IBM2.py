@@ -15,9 +15,17 @@ class IBM2:
     
     # r computes the unnormalized probability of an alignment p(i|j,J,I)
     # the penalization argument must be set low to get uniform alignement probabilities
-    def r(self,x):
-        y = 1.0*self.Jmax-np.abs(x)-self.penalization
-        return y*(y>=0)
+    # mode should belong to "gaussian", "slowdecrease" or "wtf_random_delbouys"
+    def r(self,x, mode = "slowdecrease"):
+        if mode == "wtf_random_delbouys":
+            y = 1.0*self.Jmax-np.abs(x)-self.penalization
+            return y*(y>=0)
+        elif mode == "slowdecrease":
+            return 1./(1. + np.abs(x))
+        elif mode == "gaussian":
+            return np.exp(-x*x)/np.sqrt(2 * np.pi)
+        else:
+            print("non valid mode for the r function")
     
     def train(self,n_iterations, verbose=False):
         n_sentences = len(self.corpus.french_sentences)
