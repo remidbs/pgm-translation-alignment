@@ -118,3 +118,12 @@ class HMM:
         N = np.sum([len(s) for s in self.corpus.french_sentences])
         loglikelihood = translation_loglikelihood + normalization_loglikelihood + alignment_loglikelihood
         return np.exp(-loglikelihood/N),np.exp(-alignment_loglikelihood/N),np.exp(-translation_loglikelihood/N)
+
+    def get_viterbi_alignment(self,sentence_index = 0):
+        return self.most_likely_alignment[sentence_index]
+        
+    def print_viterbi_alignment(self, sentence_index = 0):
+        self.corpus.print_alignment(sentence_index, self.get_viterbi_alignment(sentence_index))
+
+
+

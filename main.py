@@ -49,20 +49,10 @@ ibm2.train(ibm2_nb_training_step,True)
 print("...done")
 f2e = np.argmax(ibm2.proba_f_knowing_e,axis=1)
 
-# ibm2bis = IBM2.IBM2(corpus,penalization=9.0)
-# ibm2bis.train(10,True)
-# f2ebis = np.argmax(ibm2bis.proba_f_knowing_e,axis=1)
-# # raw_input("Press Enter to continue...")
-
 print "IBM2 Translations :"
 for i in range(len(corpus.french_words)):
     print corpus.french_words[i], " --> ", corpus.english_words[f2e[i]],"," # , corpus.english_words[f2ebis[i]]
 
-
-#ibm2.print_viterbi_alignment(0)
-# ibm2bis.print_viterbi_alignment(0)
-#ibm2.print_viterbi_alignment(4)
-# ibm2bis.print_viterbi_alignment(4)
 
 #%% testing HMM
 print(" ")
@@ -73,9 +63,9 @@ hmm.proba_f_knowing_e = np.load("ibm1_proba_f_knowing_e.npy")
 #hmm.proba_f_knowing_e = ibm1.proba_f_knowing_e
 print("Starting to train HMM...")
 hmm.mode = "slowdecrease"
-hmm.train(5, True)
+hmm.train(3, True)
 hmm.mode = "scoefs"
-hmm.train(10,True)
+hmm.train(3,True)
     
 print("...done")
 import matplotlib.pyplot as plt
@@ -110,3 +100,20 @@ def plot_perplexity_evol():
     plt.show()
 
 plot_perplexity_evol()
+
+
+
+#%%
+ibm1 = IBM1.IBM1(corpus)
+ibm1.proba_f_knowing_e = np.load("ibm1_proba_f_knowing_e.npy")
+it = -1
+#%%
+#it = 454
+while True:
+    it += 1
+    if len(corpus.english_sentences[it])>15:
+        break
+
+ibm1.print_viterbi_alignment(it)
+ibm2.print_viterbi_alignment(it)
+hmm.print_viterbi_alignment(it)
