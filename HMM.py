@@ -9,6 +9,9 @@ class HMM:
         self.corpus = corpus
         self.proba_J_knowing_I = np.zeros((self.Jmax+1, self.Imax+1)) # coefficient [j,i] contains P(j|i)
         self.most_likely_alignment = [None]*(len(self.corpus.french_sentences))
+        self.scoefs = np.ones((self.Imax*2-1))
+        self.perplexity_evolution = []
+        self.nb_iterations = 0
 
         # Rem : A good idea is to use the value returned by IBM1 to have a good init.
         # Tested : it seems to really improve the results !
@@ -22,6 +25,8 @@ class HMM:
             return 1./(1. + 2* np.abs(x-1))
         elif self.mode == "gaussian":
             return np.exp(-(x-1)*(x-1) / (2. * 9))/np.sqrt(2 * np.pi)
+        elif self.mode == "scoefs":
+            return self.scoefs[x+self.Imax-1]
         else:
             print("non valid mode for the s function")
 
@@ -30,8 +35,6 @@ class HMM:
         n_sentences = len(self.corpus.english_sentences)
         n_french_words = len(self.corpus.french_words)
         n_english_words = len(self.corpus.english_words)
-
-        perplexity_evolution = np.zeros(n_iterations)
 
         # Train proba_J_knowing_I
         for s in range(n_sentences):
@@ -51,6 +54,7 @@ class HMM:
 
             # Count matrix is storing occurrence of words
             count = np.zeros((n_french_words, n_english_words))
+            newcoefs = np.ones((self.Imax*2-1))
 
             # We iterate and cross improve the estimation over all sentences
             for s in range(n_sentences):
@@ -73,21 +77,26 @@ class HMM:
                 for j in range(1,J):
                     for i in range(I):
                         Q[i,j] = self.proba_f_knowing_e[f[j],e[i]] * np.max(np.array([alignment_probabilities[i,i2] * Q[i2, j-1] for i2 in range(I)]))
-
+                
                 self.most_likely_alignment[s] = np.array([np.argmax(Q[:,j]) for j in range(J)])
+                
+                #Update scoefs
+                for j in range(J-1):
+                    newcoefs[self.most_likely_alignment[s][j+1]-self.most_likely_alignment[s][j]+self.Imax-1] += 1
 
                 # Now we can easily derive from MLE the updated expression of p(f|e) maximizing p(f^J | e^I)
                 for j in range(J):
                     count[f[j],e[self.most_likely_alignment[s][j]]] += 1
 
             self.proba_f_knowing_e = count/count.sum(axis=1)[:,np.newaxis]
-
+            self.scoefs = newcoefs / self.corpus.normalization_for_hmm           
+            
             perplexity = self.get_perplexity()
-            perplexity_evolution[it] = perplexity
+            self.perplexity_evolution += [perplexity]
+            self.nb_iterations += 1
 
             if verbose:
                 print "Iteration nb",it,". Perplexity :",perplexity,"(",time.clock()-t0," sec)"
-        return perplexity_evolution
         
     def get_perplexity(self,):
         loglikelihood = 0.0

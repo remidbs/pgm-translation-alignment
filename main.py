@@ -34,18 +34,18 @@ print("...done")
 #ibm1.print_viterbi_alignment(0)
 #ibm1.print_viterbi_alignment(4)
 
-mode = "slowdecrease"
 
 #%% Testing IBM2
 print(" ")
 print("*"*50)
 print(" ")
+mode = "slowdecrease"
 ibm2 = IBM2.IBM2(corpus, mode)
 ibm2.proba_f_knowing_e = np.load("ibm1_proba_f_knowing_e.npy")
 # ibm2.proba_f_knowing_e = ibm1.proba_f_knowing_e
 print("starting to train IBM2...")
 ibm2_nb_training_step = 10
-imb2perplexityevol = ibm2.train(ibm2_nb_training_step,True)
+ibm2.train(ibm2_nb_training_step,True)
 print("...done")
 f2e = np.argmax(ibm2.proba_f_knowing_e,axis=1)
 
@@ -68,13 +68,22 @@ for i in range(len(corpus.french_words)):
 print(" ")
 print("*"*50)
 print(" ")
-hmm = HMM.HMM(corpus, mode)
-hmm.proba_f_knowing_e =np.load("ibm1_proba_f_knowing_e.npy")
+hmm = HMM.HMM(corpus, mode="slowdecrease")
+hmm.proba_f_knowing_e = np.load("ibm1_proba_f_knowing_e.npy")
 #hmm.proba_f_knowing_e = ibm1.proba_f_knowing_e
 print("Starting to train HMM...")
-hmm_nb_training_step = 10
-hmmperplexityevol = hmm.train(hmm_nb_training_step, True)
+hmm_nb_training_step = 3
+hmm.train(hmm_nb_training_step, True)
 print("...done")
+hmm.mode = "scoefs"
+hmm.train(4,True)
+
+import matplotlib.pyplot as plt
+import seaborn
+
+plt.plot(hmm.scoefs)
+
+#%%
 f2eTer = np.argmax(hmm.proba_f_knowing_e, axis=1)
 print(" ")
 print("HMM Translations :")
@@ -91,11 +100,11 @@ def plot_perplexity_evol():
     #Y0 = imb1perplexityevol
     ibm1_nb_training_step = 10
     Y0 = np.array([42,28,23,22,21,21,20.7,20.6,20.5,20.5])
-    Y1 = np.insert(imb2perplexityevol, 0, Y0[-1])
-    Y2 = np.insert(hmmperplexityevol, 0, Y0[-1])
+    Y1 = np.insert(ibm2.perplexity_evolution, 0, Y0[-1])
+    Y2 = np.insert(hmm.perplexity_evolution, 0, Y0[-1])
     plt.plot(Y0, label="ibm1 perplexity")
     plt.plot(range(ibm1_nb_training_step-1,ibm1_nb_training_step + ibm2_nb_training_step), Y1, label="ibm2 perplexity")
-    plt.plot(range(ibm1_nb_training_step-1,ibm1_nb_training_step + hmm_nb_training_step), Y2, label="hmm perplexity")
+    plt.plot(range(ibm1_nb_training_step-1,ibm1_nb_training_step + hmm.nb_iterations), Y2, label="hmm perplexity")
     plt.title("Evolution of perplexity: IBM1 pre-training - comparison of IBM2 and HMM")
     plt.legend()
     plt.show()

@@ -12,7 +12,8 @@ class IBM2:
         self.proba_f_knowing_e = np.ones((len(corpus.french_words),len(corpus.english_words))) *1.0 / len(self.corpus.french_words)
         self.loglikelihood = 0.0
         self.penalization = penalization
-
+        self.perplexity_evolution = []
+        
         self.mode = mode
     
     # r computes the unnormalized probability of an alignment p(i|j,J,I)
@@ -31,7 +32,6 @@ class IBM2:
     
     def train(self,n_iterations, verbose=False):
         n_sentences = len(self.corpus.french_sentences)
-        perplexity_evolution = np.zeros(n_iterations)
         # Train proba_J_knowing_I 
         for s in range(n_sentences):
             j = len(self.corpus.french_sentences[s])
@@ -67,11 +67,10 @@ class IBM2:
             self.proba_f_knowing_e += 1.0/len(self.corpus.french_words)*(self.proba_f_knowing_e.sum(0) == 0)[np.newaxis,:]
 
             perplexity = self.get_perplexity()
-            perplexity_evolution[it] = perplexity
+            self.perplexity_evolution += [perplexity]
 
             if verbose:
                 print "Iteration nb",it,". Perplexity :", perplexity," (",time.clock()-t0," sec)"
-        return perplexity_evolution
         
     def get_perplexity(self,recompute=False):
         if recompute:

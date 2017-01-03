@@ -36,6 +36,9 @@ class Corpus:
             for j in range(len(self.french_sentences[s])):
                 self.french_sentences[s][j] =\
                     np.where(self.french_words == self.french_sentences[s][j])[0][0]
+                    
+        self.normalization_for_hmm = 0
+        self.compute_normalization_for_hmm()
 
     #########################
     # Just for some comfort #
@@ -80,6 +83,16 @@ class Corpus:
                 else:
                     print " ",
             print 
+            
+    def compute_normalization_for_hmm(self,):
+        self.normalization_for_hmm = np.zeros(self.Imax)
+        lengths_sentences = np.array([len(sentence) for sentence in self.english_sentences])
+        frequences_of_lengths = np.bincount(lengths_sentences)
+        for i in range(self.Imax):
+            self.normalization_for_hmm[i] = np.sum(frequences_of_lengths\
+                        *(lambda x : x * (x >= 0))(np.array(range(self.Imax+1))-i))
+        self.normalization_for_hmm = np.array(list(reversed(self.normalization_for_hmm[1:]))+list(self.normalization_for_hmm))
+        self.normalization_for_hmm += (self.normalization_for_hmm == 0)           
 
 #################################
 ###  Minimal working example  ###
