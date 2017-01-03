@@ -91,15 +91,17 @@ class HMM:
             self.proba_f_knowing_e = count/count.sum(axis=1)[:,np.newaxis]
             self.scoefs = newcoefs / self.corpus.normalization_for_hmm           
             
-            perplexity = self.get_perplexity()
+            perplexity, alignment_perplexity, translation_perplexity = self.get_perplexity()
             self.perplexity_evolution += [perplexity]
             self.nb_iterations += 1
 
             if verbose:
-                print "Iteration nb",it,". Perplexity :",perplexity,"(",time.clock()-t0," sec)"
+                print "Iteration nb",it,". Perplexity :",perplexity,". Alignment perplexity :",alignment_perplexity,". Translation perplexity :",translation_perplexity,"(",time.clock()-t0," sec)"
         
     def get_perplexity(self,):
-        loglikelihood = 0.0
+        alignment_loglikelihood = 0.0
+        translation_loglikelihood = 0.0
+        normalization_loglikelihood = 0.0
         for s in range(len(self.corpus.french_sentences)):
             f = self.corpus.french_sentences[s]
             J = len(f)
@@ -108,9 +110,11 @@ class HMM:
             alignment_probabilities = np.array([[self.sfunction(i1 - i2) for i2 in range(I)] for i1 in range(I)])
             alignment_probabilities /= alignment_probabilities.sum(axis=1)[:,np.newaxis]
             #add alignments likelihood
-            loglikelihood += np.sum(np.log([alignment_probabilities[self.most_likely_alignment[s][j],self.most_likely_alignment[s][j-1]] for j in range(J)]))
+            alignment_loglikelihood += np.sum(np.log([alignment_probabilities[self.most_likely_alignment[s][j],self.most_likely_alignment[s][j-1]] for j in range(J)]))
             #add translation likelihood
-            loglikelihood += np.sum(np.log([self.proba_f_knowing_e[f[j],e[self.most_likely_alignment[s][j]]] for j in range(J)]))
+            translation_loglikelihood += np.sum(np.log([self.proba_f_knowing_e[f[j],e[self.most_likely_alignment[s][j]]] for j in range(J)]))
             #add normalization likelihood
-            loglikelihood += np.log(self.proba_J_knowing_I[J,I])
-        return np.exp(-loglikelihood/np.sum([len(self.corpus.french_sentences[s]) for s in range(len(self.corpus.french_sentences))]))
+            normalization_loglikelihood += np.log(self.proba_J_knowing_I[J,I])
+        N = np.sum([len(s) for s in self.corpus.french_sentences])
+        loglikelihood = translation_loglikelihood + normalization_loglikelihood + alignment_loglikelihood
+        return np.exp(-loglikelihood/N),np.exp(-alignment_loglikelihood/N),np.exp(-translation_loglikelihood/N)

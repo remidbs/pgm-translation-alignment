@@ -72,12 +72,12 @@ hmm = HMM.HMM(corpus, mode="slowdecrease")
 hmm.proba_f_knowing_e = np.load("ibm1_proba_f_knowing_e.npy")
 #hmm.proba_f_knowing_e = ibm1.proba_f_knowing_e
 print("Starting to train HMM...")
-hmm_nb_training_step = 3
-hmm.train(hmm_nb_training_step, True)
-print("...done")
+hmm.mode = "slowdecrease"
+hmm.train(5, True)
 hmm.mode = "scoefs"
-hmm.train(4,True)
-
+hmm.train(10,True)
+    
+print("...done")
 import matplotlib.pyplot as plt
 import seaborn
 
@@ -89,7 +89,7 @@ print(" ")
 print("HMM Translations :")
 for i in range(len(corpus.french_words)):
     print corpus.french_words[i], " --> ", corpus.english_words[f2eTer[i]]
-
+#%%
 # a short function to do a nice plot
 # meme si indique comme non utilise, seaborn change l allure du plot donc faut le garder!
 import matplotlib.pyplot as plt
