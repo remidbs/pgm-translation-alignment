@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 
 class IBM2:
-    def __init__(self,corpus, penalization = 0.0):
+    def __init__(self,corpus, mode, penalization = 0.0):
         self.Jmax = corpus.Jmax # max length of a french sentence
         self.Imax = corpus.Imax # max length of an english sentence
         self.corpus = corpus
@@ -12,18 +12,20 @@ class IBM2:
         self.proba_f_knowing_e = np.ones((len(corpus.french_words),len(corpus.english_words))) *1.0 / len(self.corpus.french_words)
         self.loglikelihood = 0.0
         self.penalization = penalization
+
+        self.mode = mode
     
     # r computes the unnormalized probability of an alignment p(i|j,J,I)
     # the penalization argument must be set low to get uniform alignement probabilities
     # mode should belong to "gaussian", "slowdecrease" or "wtf_random_delbouys"
-    def r(self,x, mode = "gaussian"):
-        if mode == "wtf_random_delbouys":
+    def r(self,x):
+        if self.mode == "wtf_random_delbouys":
             y = 1.0*self.Jmax-np.abs(x)-self.penalization
             return y*(y>=0)
-        elif mode == "slowdecrease":
-            return 1./(1. + np.abs(x))
-        elif mode == "gaussian":
-            return np.exp(-x*x / (2. * self.Imax))/np.sqrt(2 * np.pi)
+        elif self.mode == "slowdecrease":
+            return 1./(1. + 2. * np.abs(x))
+        elif self.mode == "gaussian":
+            return np.exp(-x*x / (2. * 9))/np.sqrt(2 * np.pi)
         else:
             print("non valid mode for the r function")
     

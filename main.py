@@ -13,34 +13,36 @@ corpus.print_corpus_description()
 print("...done")
 
 #%% Testing IBM1
-print(" ")
-print("*"*50)
-print(" ")
-print("Building IBM1 item...")
-ibm1 = IBM1.IBM1(corpus)
-print("...done")
-print("starting to train IBM1...")
-ibm1_nb_training_step = 10
-imb1perplexityevol = ibm1.train(ibm1_nb_training_step, verbose=True)
-print("...done")
-
-print "\nIBM1 perplexity : ",ibm1.get_perplexity(),"\n"
-
-f2e = np.argmax(ibm1.proba_f_knowing_e,axis=1)
-print "IBM1 Translations :"
-for i in range(len(corpus.french_words)):
-    print corpus.french_words[i], " --> ", corpus.english_words[f2e[i]]
+# print(" ")
+# print("*"*50)
+# print(" ")
+# print("Building IBM1 item...")
+# ibm1 = IBM1.IBM1(corpus)
+# print("...done")
+# print("starting to train IBM1...")
+# ibm1_nb_training_step = 10
+# imb1perplexityevol = ibm1.train(ibm1_nb_training_step, verbose=True)
+# print("...done")
+#
+# print "\nIBM1 perplexity : ",ibm1.get_perplexity(),"\n"
+#
+# f2e = np.argmax(ibm1.proba_f_knowing_e,axis=1)
+# print "IBM1 Translations :"
+# for i in range(len(corpus.french_words)):
+#     print corpus.french_words[i], " --> ", corpus.english_words[f2e[i]]
 
 #ibm1.print_viterbi_alignment(0)
 #ibm1.print_viterbi_alignment(4)
+
+mode = "slowdecrease"
 
 #%% Testing IBM2
 print(" ")
 print("*"*50)
 print(" ")
-ibm2 = IBM2.IBM2(corpus)
-#ibm2.proba_f_knowing_e = np.load("ibm1_proba_f_knowing_e.npy")
-ibm2.proba_f_knowing_e = ibm1.proba_f_knowing_e
+ibm2 = IBM2.IBM2(corpus, mode)
+ibm2.proba_f_knowing_e = np.load("ibm1_proba_f_knowing_e.npy")
+# ibm2.proba_f_knowing_e = ibm1.proba_f_knowing_e
 print("starting to train IBM2...")
 ibm2_nb_training_step = 10
 imb2perplexityevol = ibm2.train(ibm2_nb_training_step,True)
@@ -66,9 +68,9 @@ for i in range(len(corpus.french_words)):
 print(" ")
 print("*"*50)
 print(" ")
-hmm = HMM.HMM(corpus)
-#hmm.proba_f_knowing_e =np.load("ibm1_proba_f_knowing_e.npy")
-hmm.proba_f_knowing_e = ibm1.proba_f_knowing_e
+hmm = HMM.HMM(corpus, mode)
+hmm.proba_f_knowing_e =np.load("ibm1_proba_f_knowing_e.npy")
+#hmm.proba_f_knowing_e = ibm1.proba_f_knowing_e
 print("Starting to train HMM...")
 hmm_nb_training_step = 10
 hmmperplexityevol = hmm.train(hmm_nb_training_step, True)
@@ -86,7 +88,9 @@ import seaborn
 
 
 def plot_perplexity_evol():
-    Y0 = imb1perplexityevol
+    #Y0 = imb1perplexityevol
+    ibm1_nb_training_step = 10
+    Y0 = np.array([42,28,23,22,21,21,20.7,20.6,20.5,20.5])
     Y1 = np.insert(imb2perplexityevol, 0, Y0[-1])
     Y2 = np.insert(hmmperplexityevol, 0, Y0[-1])
     plt.plot(Y0, label="ibm1 perplexity")

@@ -3,7 +3,7 @@ import time
 
 
 class HMM:
-    def __init__(self,corpus):
+    def __init__(self,corpus, mode):
         self.Jmax = corpus.Jmax  # max length of a french sentence
         self.Imax = corpus.Imax  # max length of an english sentence
         self.corpus = corpus
@@ -14,12 +14,14 @@ class HMM:
         # Tested : it seems to really improve the results !
         self.proba_f_knowing_e = np.ones((len(corpus.french_words),len(corpus.english_words))) * 1. / len(self.corpus.english_words)
 
-    def sfunction(self, x, mode="gaussian"):
+        self.mode = mode
+
+    def sfunction(self, x):
         # parameter function to compute penalty etc.
-        if mode == "slowdecrease":
-            return 1./(1. + np.abs(x))
-        elif mode == "gaussian":
-            return np.exp(-x*x / (2. * self.Imax))/np.sqrt(2 * np.pi)
+        if self.mode == "slowdecrease":
+            return 1./(1. + 2* np.abs(x-1))
+        elif self.mode == "gaussian":
+            return np.exp(-(x-1)*(x-1) / (2. * 9))/np.sqrt(2 * np.pi)
         else:
             print("non valid mode for the s function")
 
@@ -66,7 +68,8 @@ class HMM:
                 # **** Fill Q with the corresponding dynamic recursion formula, using current estimation of p(f|e)
                 # Return an estimation of best corresponding alignment
                 # Rem : first column of Q is assuming Q(before) = 1
-                Q[:,0]= np.array([self.proba_f_knowing_e[f[0],e[i]] * np.max(np.array([alignment_probabilities[i,i2] for i2 in range(I)])) for i in range(I)])
+                #Q[:,0]= np.array([self.proba_f_knowing_e[f[0],e[i]] * np.max(np.array([alignment_probabilities[i,i2] for i2 in range(I)])) for i in range(I)])
+                Q[:,0]= np.array([self.proba_f_knowing_e[f[0],e[i]]  for i in range(I)])
                 for j in range(1,J):
                     for i in range(I):
                         Q[i,j] = self.proba_f_knowing_e[f[j],e[i]] * np.max(np.array([alignment_probabilities[i,i2] * Q[i2, j-1] for i2 in range(I)]))
