@@ -96,6 +96,8 @@ def plot_perplexity_evol():
     plt.plot(range(ibm1_nb_training_step-1,ibm1_nb_training_step + ibm2_nb_training_step), Y1, label="ibm2 perplexity")
     plt.plot(range(ibm1_nb_training_step-1,ibm1_nb_training_step + hmm.nb_iterations), Y2, label="hmm perplexity")
     plt.title("Evolution of perplexity: IBM1 pre-training - comparison of IBM2 and HMM")
+    plt.xlabel("nb iterations")
+    plt.ylabel("perplexity")
     plt.legend()
     plt.show()
 
